@@ -48,6 +48,15 @@ class PopulationHistory:
         :param top: if equal to 0.5 it will return two instances in the top 50% of the selected population
         :return: return two instances in the top {top} percent of the last {how_far_back} percent of the population
         """
+        assert how_far_back>0 and how_far_back<=1, "how_far_back must be between 0 and 1"
+        assert top > 0 and top <= 1, "top must be must be between 0 and 1"
+        starting_index = int(len(self.history) * (1-how_far_back))
+        sorted_population_0f_interest =  sorted(self.history[starting_index:], key=lambda x: (x["accuracy"], x))
+        start_range = int(len(sorted_population_0f_interest) * (1-top))
+        end_range = len(sorted_population_0f_interest)
+        assert (end_range-start_range)>2, "Not enough data"
+        a, b = random.sample(range(start_range, end_range), 2)
+        return sorted_population_0f_interest[a], sorted_population_0f_interest[b]
 
 def build_random_chromosomes(number_of_instances=10):
     list_of_optimizers = ['SGD', 'Adam', 'RMSprop']
