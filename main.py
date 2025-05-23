@@ -1,9 +1,17 @@
 import conv
 import conv_utils
+import genetic_utils
 import torch
 import torch.nn as nn
 import torch.optim as optim
 from torch.utils.data import DataLoader
+
+def build_model_optimizer(num_classes, img_shape, chromosome, device):
+    model = conv.CNN(num_classes=num_classes, img_rows=img_shape[0], img_cols=img_shape[1], img_channels=img_shape[2],
+                     num_conv_layers=chromosome.num_conv_layers, conv_dropout=chromosome.conv_dropout,
+                     classifier_dropout=chromosome.classifier_dropout).to(device)
+    optimizer = chromosome.return_optimizer(model)
+    return model, optimizer
 
 
 def main(dataset:conv_utils.DatasetName=conv_utils.DatasetName.CIFAR10, train_size=0.2, test_size=0.1):
@@ -25,13 +33,33 @@ def main(dataset:conv_utils.DatasetName=conv_utils.DatasetName.CIFAR10, train_si
     train_loader = DataLoader(train_dataset, batch_size=64, shuffle=True)
     test_loader = DataLoader(test_dataset, batch_size=64, shuffle=False)
 
-    # create model
-    model = conv.CNN(num_classes, img_shape[0], img_shape[1], img_shape[2]).to(device)
+    # create initial random chromosomes
+    random_chromosomes = genetic_utils.build_random_chromosomes(10)
+    # create and train a model for each config and add it to the models history
+    model_history = genetic_utils.PopulationHistory()
+    for chromosome in random_chromosomes:
+        print(f"chromosome: {chromosome}")
+        model, optimizer = build_model_optimizer(num_classes=num_classes, img_shape=img_shape, chromosome=chromosome, device=device)
+        print(f"model: {model}")
+        accuracy = conv_utils.train_model(train_loader, test_loader, model, optimizer, device, n_epochs=10)
+        print(f"model accuracy: {accuracy}")
+        model_history.add_instance(chromosome=chromosome, model=model, accuracy=accuracy)
 
-    optimizer = optim.Adam(model.parameters(), lr=0.001)
+    # run the genetic algorithme for 5 epochs
+    # for _ in range(5):
+    #     instance1, instance2 = model_history.return_couple(how_far_back=1.0, top=0.3)
+    #     print(f"chromosome 1: {instance1['chromosome']} \nchromosome 2: {instance2['chromosome']}")
+    #     crossover_chromosome = instance1['chromosome'].crossover(instance2['chromosome'])
+    #     print(f"crossover chromosome: {crossover_chromosome}")
+    #     mutated_chromosome = crossover_chromosome.mutate()
+    #     print(f"mutated chromosome: {mutated_chromosome}")
+    #     model, optimizer = build_model_optimizer(num_classes=num_classes, img_shape=img_shape, chromosome=mutated_chromosome,
+    #                                              device=device)
+    #     accuracy = conv_utils.train_model(train_loader, test_loader, model, optimizer, device, n_epochs=10)
+    #     print(f"model accuracy: {accuracy}")
+    #     model_history.add_instance(chromosome=mutated_chromosome, model=model, accuracy=accuracy)
 
-    accuracy = conv_utils.train_model(train_loader, test_loader, model, optimizer, device, n_epochs=10)
-    print(accuracy)
+
 
 
 if __name__ == '__main__':

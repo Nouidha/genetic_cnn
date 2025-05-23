@@ -60,7 +60,7 @@ def load_train_test_dataset(dataset:DatasetName, train_size, test_size, random_s
     return train_subset, test_subset, len(train_dataset.classes), train_dataset.data.shape[1:]
 
 
-def train_model(train_data, test_data, model, optimizer, device, n_epochs=10):
+def train_model(train_data, test_data, model, optimizer, device, n_epochs=10, verbose=False):
     """
 
     :param train_data: training dataset
@@ -75,11 +75,13 @@ def train_model(train_data, test_data, model, optimizer, device, n_epochs=10):
     for epoch in range(0, n_epochs):
 
         train_loss, train_acc = run_epoch(train_data, model.train(), optimizer, device)
-        print('Train loss: {:.6f} | Train accuracy: {:.6f}'.format(train_loss, train_acc))
+        if verbose:
+            print('Train loss: {:.6f} | Train accuracy: {:.6f}'.format(train_loss, train_acc))
 
         # Run **validation**
         test_loss, test_acc = run_epoch(test_data, model.eval(), optimizer, device)
-        print('Test loss:   {:.6f} | Test accuracy:   {:.6f}'.format(test_loss, test_acc))
+        if verbose:
+            print('Test loss:   {:.6f} | Test accuracy:   {:.6f}'.format(test_loss, test_acc))
 
     return test_acc
 
