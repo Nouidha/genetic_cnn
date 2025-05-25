@@ -26,7 +26,12 @@ def main(dataset:conv_utils.DatasetName=conv_utils.DatasetName.MINST, train_size
     #ensure deterministic behavior
     conv_utils.set_seed(42)
     # use cuda when possible
-    device = torch.device("cuda" if torch.cuda.is_available() else "cpu")
+    if torch.cuda.is_available():
+        device = torch.device('cuda')
+    elif torch.backends.mps.is_available():
+        device = torch.device("mps") # stands for Metal Performance Shaders (on Apple Silicon)
+    else:
+        device = torch.device("cpu")
 
     # load data
     train_dataset, test_dataset, num_classes, img_shape = conv_utils.load_train_test_dataset(dataset, train_size=train_size, test_size=test_size,
