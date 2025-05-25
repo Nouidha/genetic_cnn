@@ -1,6 +1,5 @@
 import random
 import torch.optim as optim
-from sympy.physics.units import momentum
 
 
 class Chromosome:
@@ -29,7 +28,7 @@ class Chromosome:
         elif lowercase_name == "rmsprop":
             return optim.RMSprop(model.parameters(), lr=self.learning_rate, weight_decay=self.weight_decay)
         else:
-             raise ValueError(f"optimizer '{self.optimizer_name}' not supported")
+             raise ValueError(f"optimizer '{self.optimizer_name}' is not supported")
 
 
 class PopulationHistory:
@@ -48,8 +47,8 @@ class PopulationHistory:
         :param top: if equal to 0.5 it will return two instances in the top 50% of the selected population
         :return: return two instances in the top {top} percent of the last {how_far_back} percent of the population
         """
-        assert how_far_back>0 and how_far_back<=1, "how_far_back must be between 0 and 1"
-        assert top > 0 and top <= 1, "top must be must be between 0 and 1"
+        assert 0 < how_far_back <= 1, "how_far_back must be between 0 and 1"
+        assert 0 < top <= 1, "top must be must be between 0 and 1"
         starting_index = int(len(self.history) * (1-how_far_back))
         sorted_population_0f_interest =  sorted(self.history[starting_index:], key=lambda x: (x["accuracy"], x))
         start_range = int(len(sorted_population_0f_interest) * (1-top))
@@ -63,7 +62,7 @@ def build_random_chromosomes(number_of_instances=10):
     list_of_learning_rates = [1e-2, 1e-3, 1e-4, 1e-5]
     list_of_momentums = [0.9, 0.95, 0.99]
     list_of_weight_decays = [1e-5, 1e-6, 1e-7]
-    list_of_num_conv_layers = [2, 3]
+    list_of_num_conv_layers = [1, 2]
     list_of_conv_dropouts = [0.1, 0.2, 0.3]
     list_of_classifier_dropouts = [0.3, 0.4, 0.5]
 

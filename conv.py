@@ -1,8 +1,4 @@
-import numpy as np
-import torch
 import torch.nn as nn
-
-import torch.nn.functional as F
 
 
 
@@ -17,7 +13,7 @@ class CNN(nn.Module):
         self.img_cols = img_cols
         self.img_channels = img_channels
 
-        assert num_conv_layers in [2,3], "Number of convolutional layers must be equal to 2 or 3"
+        assert num_conv_layers in [1, 2,3], "Number of convolutional layers must be equal to 1, 2 or 3"
 
         self.model = nn.Sequential(
         nn.Conv2d(in_channels=self.img_channels, out_channels=64, kernel_size=3, stride=1, padding=1),
@@ -25,34 +21,23 @@ class CNN(nn.Module):
         nn.Conv2d(in_channels=64, out_channels=64, kernel_size=3, stride=1, padding=1),
         nn.ReLU(),
         nn.MaxPool2d(2, 2),
-        nn.Dropout2d(conv_dropout),
+        nn.Dropout2d(conv_dropout))
 
-        nn.Conv2d(in_channels=64, out_channels=128, kernel_size=3, stride=1, padding=1),
-        nn.ReLU(),
-        nn.Conv2d(in_channels=128, out_channels=128, kernel_size=3, stride=1, padding=1),
-        nn.ReLU(),
-        nn.MaxPool2d(2, 2),
-        nn.Dropout2d(conv_dropout),
-        )
-        if num_conv_layers == 3:
-            out_size = 256
+        in_channels = 64
+        for _ in range(1, num_conv_layers):
+            previous_in_channels = in_channels
+            in_channels *= 2
             self.model = nn.Sequential(*list(self.model.children()),
-                                       nn.Conv2d(in_channels=128, out_channels=256, kernel_size=3, stride=1, padding=1),
+                                       nn.Conv2d(in_channels=previous_in_channels, out_channels=in_channels, kernel_size=3, stride=1, padding=1),
                                        nn.ReLU(),
-                                       nn.Conv2d(in_channels=256, out_channels=256, kernel_size=3, stride=1, padding=1),
+                                       nn.Conv2d(in_channels=in_channels, out_channels=in_channels, kernel_size=3, stride=1, padding=1),
                                        nn.ReLU(),
                                        nn.MaxPool2d(2, 2),
-                                       nn.Dropout2d(conv_dropout),
+                                       nn.Dropout2d(conv_dropout))
 
-                                       nn.AdaptiveAvgPool2d((1, 1))
-                                       )
-        else:
-            out_size = 128
-            self.model = nn.Sequential(*list(self.model.children()),nn.AdaptiveAvgPool2d((1, 1)))
+        self.model = nn.Sequential(*list(self.model.children()), nn.AdaptiveAvgPool2d((1, 1)))
 
-
-
-        self.classifier = nn.Linear(out_size, self.num_classes)
+        self.classifier = nn.Linear(in_channels, self.num_classes)
         self.classifier_dropout = nn.Dropout(classifier_dropout)
 
     def __str__(self):

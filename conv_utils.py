@@ -1,4 +1,3 @@
-import math
 import os
 import random
 from enum import Enum
@@ -8,8 +7,6 @@ import torchvision as tv
 from torch.utils.data import Subset
 import torchvision.transforms as transforms
 import torch.nn.functional as F
-from torch.utils.data import random_split
-from torch.utils.data import DataLoader
 from sklearn.model_selection import train_test_split
 from tqdm import tqdm
 
@@ -27,8 +24,9 @@ def set_seed(seed_value=42):
     torch.cuda.manual_seed_all(seed_value)  # if you are using GPU
 
 class DatasetName(Enum):
-    CIFAR10 = 0
-    CIFAR100 = 1
+    MINST = 0
+    CIFAR10 = 1
+    CIFAR100 = 2
 
 def load_train_test_dataset(dataset:DatasetName, train_size, test_size, random_state=42, force_download=False):
     """
@@ -42,12 +40,15 @@ def load_train_test_dataset(dataset:DatasetName, train_size, test_size, random_s
     """
     if dataset == DatasetName.CIFAR100:
         download = force_download or not os.path.exists('./data/cifar-100-batches-py')
-        train_dataset = tv.datasets.CIFAR10(root='./data', train=True, download=download,
-                                            transform=transform)
+        train_dataset = tv.datasets.CIFAR10(root='./data', train=True, download=download, transform=transform)
     elif dataset == DatasetName.CIFAR10:
         download = force_download or not os.path.exists('./data/cifar-10-batches-py')
-        train_dataset = tv.datasets.CIFAR10(root='./data', train=True, download=download,
-                                            transform=transform)
+        train_dataset = tv.datasets.CIFAR10(root='./data', train=True, download=download, transform=transform)
+    elif dataset == DatasetName.MINST:
+        download = force_download or not os.path.exists('./data/minst')
+        train_dataset = tv.datasets.MNIST(root='./data', train=True, download=download, transform=transform)
+    else:
+        raise ValueError(f"dataset '{dataset}' is not supported")
 
     targets = train_dataset.targets
 
@@ -69,6 +70,7 @@ def train_model(train_data, test_data, model, optimizer, device, n_epochs=10, ve
     :param optimizer: optimizer
     :param device: device
     :param n_epochs:
+    :param verbose: display per-epoch accuracy and loss values for both training and testing
     :return:
     """
     test_acc = 0

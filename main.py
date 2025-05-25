@@ -7,14 +7,15 @@ import torch.optim as optim
 from torch.utils.data import DataLoader
 
 def build_model_optimizer(num_classes, img_shape, chromosome, device):
-    model = conv.CNN(num_classes=num_classes, img_rows=img_shape[0], img_cols=img_shape[1], img_channels=img_shape[2],
+    img_channels = 1 if len(img_shape) == 2 else img_shape[2]
+    model = conv.CNN(num_classes=num_classes, img_rows=img_shape[0], img_cols=img_shape[1], img_channels=img_channels,
                      num_conv_layers=chromosome.num_conv_layers, conv_dropout=chromosome.conv_dropout,
                      classifier_dropout=chromosome.classifier_dropout).to(device)
     optimizer = chromosome.return_optimizer(model)
     return model, optimizer
 
 
-def main(dataset:conv_utils.DatasetName=conv_utils.DatasetName.CIFAR10, train_size=0.2, test_size=0.1):
+def main(dataset:conv_utils.DatasetName=conv_utils.DatasetName.MINST, train_size=0.3, test_size=0.1):
     """
 
     :param dataset: enum value designing the name of the dataset
