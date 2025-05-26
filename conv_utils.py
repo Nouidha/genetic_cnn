@@ -11,10 +11,15 @@ from sklearn.model_selection import train_test_split
 from tqdm import tqdm
 
 
-transform  = transforms.Compose([
+rgb_transform  = transforms.Compose([
     transforms.ToTensor(),  # Convert images to PyTorch tensors
     transforms.Normalize((0.5, 0.5, 0.5),  # Mean for each channel
                          (0.5, 0.5, 0.5))  # Std for each channel
+])
+
+grayscale_transform = transforms.Compose([
+    transforms.ToTensor(),  # Convert images to PyTorch tensors
+    transforms.Normalize((0.1307,), (0.3081,))  # Standard MNIST normalization
 ])
 
 def set_seed(seed_value=42):
@@ -40,13 +45,13 @@ def load_train_test_dataset(dataset:DatasetName, train_size, test_size, random_s
     """
     if dataset == DatasetName.CIFAR100:
         download = force_download or not os.path.exists('./data/cifar-100-batches-py')
-        train_dataset = tv.datasets.CIFAR10(root='./data', train=True, download=download, transform=transform)
+        train_dataset = tv.datasets.CIFAR10(root='./data', train=True, download=download, transform=rgb_transform)
     elif dataset == DatasetName.CIFAR10:
         download = force_download or not os.path.exists('./data/cifar-10-batches-py')
-        train_dataset = tv.datasets.CIFAR10(root='./data', train=True, download=download, transform=transform)
+        train_dataset = tv.datasets.CIFAR10(root='./data', train=True, download=download, transform=rgb_transform)
     elif dataset == DatasetName.MINST:
         download = force_download or not os.path.exists('./data/minst')
-        train_dataset = tv.datasets.MNIST(root='./data', train=True, download=download, transform=transform)
+        train_dataset = tv.datasets.MNIST(root='./data', train=True, download=download, transform=grayscale_transform)
     else:
         raise ValueError(f"dataset '{dataset}' is not supported")
 

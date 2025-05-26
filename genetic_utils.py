@@ -62,7 +62,7 @@ def build_random_chromosomes(number_of_instances=10):
     list_of_learning_rates = [1e-2, 1e-3, 1e-4, 1e-5]
     list_of_momentums = [0.9, 0.95, 0.99]
     list_of_weight_decays = [1e-5, 1e-6, 1e-7]
-    list_of_num_conv_layers = [1, 2]
+    list_of_num_conv_layers = [1, 2, 3]
     list_of_conv_dropouts = [0.1, 0.2, 0.3]
     list_of_classifier_dropouts = [0.3, 0.4, 0.5]
 

@@ -36,8 +36,8 @@ def main(dataset:conv_utils.DatasetName=conv_utils.DatasetName.MINST, train_size
     # load data
     train_dataset, test_dataset, num_classes, img_shape = conv_utils.load_train_test_dataset(dataset, train_size=train_size, test_size=test_size,
                                                                                   random_state=42, force_download=False)
-    train_loader = DataLoader(train_dataset, batch_size=32, shuffle=True)
-    test_loader = DataLoader(test_dataset, batch_size=32, shuffle=False)
+    train_loader = DataLoader(train_dataset, batch_size=64, shuffle=True)
+    test_loader = DataLoader(test_dataset, batch_size=64, shuffle=False)
 
     # create initial random chromosomes
     random_chromosomes = genetic_utils.build_random_chromosomes(10)
@@ -50,6 +50,8 @@ def main(dataset:conv_utils.DatasetName=conv_utils.DatasetName.MINST, train_size
         accuracy = conv_utils.train_model(train_loader, test_loader, model, optimizer, device, n_epochs=5)
         print(f"model accuracy: {accuracy}")
         model_history.add_instance(chromosome=chromosome, model=model, accuracy=accuracy)
+
+    print("finished training")
 
     # run the genetic algorithme for 5 epochs
     # for _ in range(5):
