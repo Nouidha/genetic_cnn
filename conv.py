@@ -16,14 +16,14 @@ class CNN(nn.Module):
         assert num_conv_layers in [1, 2,3], "Number of convolutional layers must be equal to 1, 2 or 3"
 
         self.model = nn.Sequential(
-        nn.Conv2d(in_channels=self.img_channels, out_channels=64, kernel_size=3, stride=1, padding=1),
+        nn.Conv2d(in_channels=self.img_channels, out_channels=32, kernel_size=3, stride=1, padding=1),
         nn.ReLU(),
-        nn.Conv2d(in_channels=64, out_channels=64, kernel_size=3, stride=1, padding=1),
+        nn.Conv2d(in_channels=32, out_channels=32, kernel_size=3, stride=1, padding=1),
         nn.ReLU(),
         nn.MaxPool2d(2, 2),
         nn.Dropout2d(conv_dropout))
 
-        in_channels = 64
+        in_channels = 32
         for _ in range(1, num_conv_layers):
             previous_in_channels = in_channels
             in_channels *= 2

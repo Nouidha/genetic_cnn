@@ -89,7 +89,7 @@ def train_model(train_data, test_data, model, optimizer, device, n_epochs=10, ve
 
 def compute_accuracy(predictions, y):
     """Computes the accuracy of predictions against the gold labels, y."""
-    return np.mean(np.equal(predictions.numpy(), y.numpy()))
+    return np.mean(np.equal(predictions.to('cpu').numpy(), y.to('cpu').numpy()))
 
 def run_epoch(data, model, optimizer, device):
     """

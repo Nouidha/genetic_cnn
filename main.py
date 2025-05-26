@@ -15,7 +15,7 @@ def build_model_optimizer(num_classes, img_shape, chromosome, device):
     return model, optimizer
 
 
-def main(dataset:conv_utils.DatasetName=conv_utils.DatasetName.MINST, train_size=0.3, test_size=0.1):
+def main(dataset:conv_utils.DatasetName=conv_utils.DatasetName.MINST, train_size=0.4, test_size=0.2):
     """
 
     :param dataset: enum value designing the name of the dataset
@@ -36,8 +36,8 @@ def main(dataset:conv_utils.DatasetName=conv_utils.DatasetName.MINST, train_size
     # load data
     train_dataset, test_dataset, num_classes, img_shape = conv_utils.load_train_test_dataset(dataset, train_size=train_size, test_size=test_size,
                                                                                   random_state=42, force_download=False)
-    train_loader = DataLoader(train_dataset, batch_size=64, shuffle=True)
-    test_loader = DataLoader(test_dataset, batch_size=64, shuffle=False)
+    train_loader = DataLoader(train_dataset, batch_size=32, shuffle=True)
+    test_loader = DataLoader(test_dataset, batch_size=32, shuffle=False)
 
     # create initial random chromosomes
     random_chromosomes = genetic_utils.build_random_chromosomes(10)
@@ -47,7 +47,7 @@ def main(dataset:conv_utils.DatasetName=conv_utils.DatasetName.MINST, train_size
         print(f"chromosome: {chromosome}")
         model, optimizer = build_model_optimizer(num_classes=num_classes, img_shape=img_shape, chromosome=chromosome, device=device)
         print(f"model: {model}")
-        accuracy = conv_utils.train_model(train_loader, test_loader, model, optimizer, device, n_epochs=10)
+        accuracy = conv_utils.train_model(train_loader, test_loader, model, optimizer, device, n_epochs=5)
         print(f"model accuracy: {accuracy}")
         model_history.add_instance(chromosome=chromosome, model=model, accuracy=accuracy)
 
