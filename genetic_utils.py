@@ -27,6 +27,74 @@ class Chromosome:
         else:
              raise ValueError(f"optimizer '{self.optimizer_name}' is not supported")
 
+    #### adding crossover and mutation
+    def crossover(self, second_instance, rate=0.5):
+        """
+        Perform crossover between two parent chromosomes to produce an offspring.
+
+        :param second_instance: The second parent chromosome.
+        :param rate: The probability of inheriting a gene from the first parent.
+        :return: offspring.
+        """
+        # here we randomly combine genes from both parents
+        optimizer_name = self.optimizer_name if random.random() < rate else second_instance.optimizer_name
+        learning_rate = self.learning_rate if random.random() < rate else second_instance.learning_rate
+        momentum = self.momentum if random.random() < rate else second_instance.momentum
+        weight_decay = self.weight_decay if random.random() < rate else second_instance.weight_decay
+        num_conv_layers = self.num_conv_layers if random.random() < rate else second_instance.num_conv_layers
+        conv_dropout = self.conv_dropout if random.random() < rate else second_instance.conv_dropout
+        classifier_dropout = self.classifier_dropout if random.random() < rate else second_instance.classifier_dropout
+
+        # we reeturn the babies offspring chromosome
+
+        return Chromosome(
+            optimizer_name=optimizer_name,
+            learning_rate=learning_rate,
+            momentum=momentum,
+            weight_decay=weight_decay,
+            num_conv_layers=num_conv_layers,
+            conv_dropout=conv_dropout,
+            classifier_dropout=classifier_dropout
+        )
+
+    def mutate(self, rate=0.1):
+        """
+        Perform mutation on the chromosome by randomly altering its genes.
+
+        :param mutation_rate: The probability of mutating each gene.
+        :return: A new Chromosome instance (mutated version).
+        """
+        # Define the possible values for each gene
+        # g gardé ta grille d'avant pour les parametres utilisé pr les random change
+        list_of_optimizers = ['SGD', 'Adam', 'RMSprop']
+        list_of_learning_rates = [1e-2, 1e-3, 1e-4, 1e-5]
+        list_of_momentums = [0.9, 0.95, 0.99]
+        list_of_weight_decays = [1e-5, 1e-6, 1e-7]
+        list_of_num_conv_layers = [1, 2]
+        list_of_conv_dropouts = [0.1, 0.2, 0.3]
+        list_of_classifier_dropouts = [0.3, 0.4, 0.5]
+
+        # to mutate each gene with a probability set to 10% (each chromosome gene has a 10% chance of being mutated)
+        # 50% was too high ? dont know tu peux changer la proba
+        optimizer_name = random.choice(list_of_optimizers) if random.random() < rate else self.optimizer_name
+        learning_rate = random.choice(list_of_learning_rates) if random.random() < rate else self.learning_rate
+        momentum = random.choice(list_of_momentums) if random.random() < rate else self.momentum
+        weight_decay = random.choice(list_of_weight_decays) if random.random() < rate else self.weight_decay
+        num_conv_layers = random.choice(list_of_num_conv_layers) if random.random() < rate else self.num_conv_layers
+        conv_dropout = random.choice(list_of_conv_dropouts) if random.random() < rate else self.conv_dropout
+        classifier_dropout = random.choice(
+            list_of_classifier_dropouts) if random.random() < rate else self.classifier_dropout
+
+        return Chromosome(
+            optimizer_name=optimizer_name,
+            learning_rate=learning_rate,
+            momentum=momentum,
+            weight_decay=weight_decay,
+            num_conv_layers=num_conv_layers,
+            conv_dropout=conv_dropout,
+            classifier_dropout=classifier_dropout
+        )
+
 
 class PopulationHistory:
     def __init__(self):
@@ -79,72 +147,4 @@ def build_random_chromosomes(number_of_instances=10):
 
 
 
-#### adding crossover and mutation 
 
-def crossover(self, second_instance, rate=0.5):
-    """
-    Perform crossover between two parent chromosomes to produce an offspring.
-
-    :param second_instance: The second parent chromosome.
-    :param rate: The probability of inheriting a gene from the first parent.
-    :return: offspring.
-    """
-    # here we randomly combine genes from both parents
-    optimizer_name = self.optimizer_name if random.random() < rate else second_instance.optimizer_name
-    learning_rate = self.learning_rate if random.random() < rate else second_instance.learning_rate
-    momentum = self.momentum if random.random() < rate else second_instance.momentum
-    weight_decay = self.weight_decay if random.random() < rate else second_instance.weight_decay
-    num_conv_layers = self.num_conv_layers if random.random() < rate else second_instance.num_conv_layers
-    conv_dropout = self.conv_dropout if random.random() < rate else second_instance.conv_dropout
-    classifier_dropout = self.classifier_dropout if random.random() < rate else second_instance.classifier_dropout
-
-    # we reeturn the babies offspring chromosome 
-
-    return Chromosome(
-        optimizer_name=optimizer_name,
-        learning_rate=learning_rate,
-        momentum=momentum,
-        weight_decay=weight_decay,
-        num_conv_layers=num_conv_layers,
-        conv_dropout=conv_dropout,
-        classifier_dropout=classifier_dropout
-    )
-    
-
-def mutation(self, rate=0.1):
-    """
-    Perform mutation on the chromosome by randomly altering its genes.
-
-    :param mutation_rate: The probability of mutating each gene.
-    :return: A new Chromosome instance (mutated version).
-    """
-    # Define the possible values for each gene
-    # g gardé ta grille d'avant pour les parametres utilisé pr les random change
-    list_of_optimizers = ['SGD', 'Adam', 'RMSprop']
-    list_of_learning_rates = [1e-2, 1e-3, 1e-4, 1e-5]
-    list_of_momentums = [0.9, 0.95, 0.99]
-    list_of_weight_decays = [1e-5, 1e-6, 1e-7]
-    list_of_num_conv_layers = [1, 2]
-    list_of_conv_dropouts = [0.1, 0.2, 0.3]
-    list_of_classifier_dropouts = [0.3, 0.4, 0.5]
-
-    # to mutate each gene with a probability set to 10% (each chromosome gene has a 10% chance of being mutated) 
-     #50% was too high ? dont know tu peux changer la proba
-    optimizer_name = random.choice(list_of_optimizers) if random.random() < rate else self.optimizer_name
-    learning_rate = random.choice(list_of_learning_rates) if random.random() < rate else self.learning_rate
-    momentum = random.choice(list_of_momentums) if random.random() < rate else self.momentum
-    weight_decay = random.choice(list_of_weight_decays) if random.random() < rate else self.weight_decay
-    num_conv_layers = random.choice(list_of_num_conv_layers) if random.random() < rate else self.num_conv_layers
-    conv_dropout = random.choice(list_of_conv_dropouts) if random.random() < rate else self.conv_dropout
-    classifier_dropout = random.choice(list_of_classifier_dropouts) if random.random() < rate else self.classifier_dropout
-
-    
-    return Chromosome(
-        optimizer_name=optimizer_name,
-        learning_rate=learning_rate,
-        momentum=momentum,
-        weight_decay=weight_decay,
-        num_conv_layers=num_conv_layers,
-        conv_dropout=conv_dropout,
-        classifier_dropout=classifier_dropout
-    )
