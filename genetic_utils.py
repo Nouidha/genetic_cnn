@@ -1,4 +1,5 @@
 import random
+import math
 import torch.optim as optim
 
 
@@ -114,9 +115,9 @@ class PopulationHistory:
         """
         assert 0 < how_far_back <= 1, "how_far_back must be between 0 and 1"
         assert 0 < top <= 1, "top must be must be between 0 and 1"
-        starting_index = int(len(self.history) * (1-how_far_back))
-        sorted_population_0f_interest =  sorted(self.history[starting_index:], key=lambda x: (x["accuracy"], x))
-        start_range = int(len(sorted_population_0f_interest) * (1-top))
+        starting_index = math.floor(len(self.history) * (1-how_far_back))
+        sorted_population_0f_interest =  sorted(self.history[starting_index:], key=lambda x: x["accuracy"])
+        start_range = math.floor(len(sorted_population_0f_interest) * (1-top))
         end_range = len(sorted_population_0f_interest)
         assert (end_range-start_range)>2, "Not enough data"
         a, b = random.sample(range(start_range, end_range), 2)

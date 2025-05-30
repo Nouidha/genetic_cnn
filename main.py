@@ -53,10 +53,10 @@ def main(dataset:conv_utils.DatasetName=conv_utils.DatasetName.MINST, train_size
 
 
     # run the genetic algorithme for 5 epochs
-    top = 0.3
+    top = 0.5
     for _ in range(5):
         instance1, instance2 = model_history.return_couple(how_far_back=1.0, top=top)
-        top -= 0.04
+        top -= 0.05
         print(f"chromosome 1: {instance1['chromosome']} \nchromosome 2: {instance2['chromosome']}")
         crossover_chromosome = instance1['chromosome'].crossover(instance2['chromosome'])
         print(f"crossover chromosome: {crossover_chromosome}")
