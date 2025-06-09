@@ -58,42 +58,37 @@ class Chromosome:
             classifier_dropout=classifier_dropout
         )
 
-    def mutate(self, rate=0.1):
-        """
-        Perform mutation on the chromosome by randomly altering its genes.
+    
+    def mutate(self, rate):
+        mutated = False 
+        #making sure that at least one parameter is mutated
+        while not mutated:
+            optimizer_name = random.choice(['SGD', 'Adam', 'RMSprop']) if random.random() < rate else self.optimizer_name
+            learning_rate = random.uniform(1e-5, 1e-2) if random.random() < rate else self.learning_rate
+            momentum = random.uniform(0.8, 0.99) if random.random() < rate else self.momentum
+            weight_decay = random.uniform(1e-7, 1e-4) if random.random() < rate else self.weight_decay
+            num_conv_layers = random.randint(1, 3) if random.random() < rate else self.num_conv_layers
+            conv_dropout = random.uniform(0.0, 0.5) if random.random() < rate else self.conv_dropout
+            classifier_dropout = random.uniform(0.2, 0.6) if random.random() < rate else self.classifier_dropout
 
-        :param mutation_rate: The probability of mutating each gene.
-        :return: A new Chromosome instance (mutated version).
-        """
-        # Define the possible values for each gene
-        # g gardé ta grille d'avant pour les parametres utilisé pr les random change
-        list_of_optimizers = ['SGD', 'Adam', 'RMSprop']
-        list_of_learning_rates = [1e-2, 1e-3, 1e-4, 1e-5]
-        list_of_momentums = [0.9, 0.95, 0.99]
-        list_of_weight_decays = [1e-5, 1e-6, 1e-7]
-        list_of_num_conv_layers = [1, 2]
-        list_of_conv_dropouts = [0.1, 0.2, 0.3]
-        list_of_classifier_dropouts = [0.3, 0.4, 0.5]
-
-        # to mutate each gene with a probability set to 10% (each chromosome gene has a 10% chance of being mutated)
-        # 50% was too high ? dont know tu peux changer la proba
-        optimizer_name = random.choice(list_of_optimizers) if random.random() < rate else self.optimizer_name
-        learning_rate = random.choice(list_of_learning_rates) if random.random() < rate else self.learning_rate
-        momentum = random.choice(list_of_momentums) if random.random() < rate else self.momentum
-        weight_decay = random.choice(list_of_weight_decays) if random.random() < rate else self.weight_decay
-        num_conv_layers = random.choice(list_of_num_conv_layers) if random.random() < rate else self.num_conv_layers
-        conv_dropout = random.choice(list_of_conv_dropouts) if random.random() < rate else self.conv_dropout
-        classifier_dropout = random.choice(
-            list_of_classifier_dropouts) if random.random() < rate else self.classifier_dropout
+            mutated = any([
+                optimizer_name != self.optimizer_name,
+                learning_rate != self.learning_rate,
+                momentum != self.momentum,
+                weight_decay != self.weight_decay,
+                num_conv_layers != self.num_conv_layers,
+                conv_dropout != self.conv_dropout,
+                classifier_dropout != self.classifier_dropout,
+            ])
 
         return Chromosome(
-            optimizer_name=optimizer_name,
-            learning_rate=learning_rate,
-            momentum=momentum,
-            weight_decay=weight_decay,
-            num_conv_layers=num_conv_layers,
-            conv_dropout=conv_dropout,
-            classifier_dropout=classifier_dropout
+            optimizer_name, 
+            learning_rate, 
+            momentum, 
+            weight_decay,
+            num_conv_layers, 
+            conv_dropout, 
+            classifier_dropout
         )
 
 
@@ -123,27 +118,84 @@ class PopulationHistory:
         a, b = random.sample(range(start_range, end_range), 2)
         return sorted_population_0f_interest[a], sorted_population_0f_interest[b]
 
-def build_random_chromosomes(number_of_instances=10):
-    list_of_optimizers = ['SGD', 'Adam', 'RMSprop']
-    list_of_learning_rates = [1e-2, 1e-3, 1e-4, 1e-5]
-    list_of_momentums = [0.9, 0.95, 0.99]
-    list_of_weight_decays = [1e-5, 1e-6, 1e-7]
-    list_of_num_conv_layers = [1, 2, 3]
-    list_of_conv_dropouts = [0.1, 0.2, 0.3]
-    list_of_classifier_dropouts = [0.3, 0.4, 0.5]
-
+def build_random_chromosomes(number_of_instances=10): #for initial population 
     chromosomes = []
-    for index in range(number_of_instances):
-        optimizer_name = random.choice(list_of_optimizers)
-        lr = random.choice(list_of_learning_rates)
-        momentum = random.choice(list_of_momentums)
-        weight_decay = random.choice(list_of_weight_decays)
-        num_conv_layers = random.choice(list_of_num_conv_layers)
-        conv_dropout = random.choice(list_of_conv_dropouts)
-        classifier_dropout = random.choice(list_of_classifier_dropouts)
-        chromosomes.append(Chromosome(optimizer_name=optimizer_name, learning_rate=lr, momentum=momentum, weight_decay=weight_decay,
-                                      num_conv_layers=num_conv_layers, conv_dropout=conv_dropout, classifier_dropout=classifier_dropout))
+    for _ in range(number_of_instances):
+        optimizer_name = random.choice(['SGD', 'Adam', 'RMSprop'])
+        learning_rate = random.uniform(1e-5, 1e-2)
+        momentum = random.uniform(0.8, 0.99)
+        weight_decay = random.uniform(1e-7, 1e-4)
+        num_conv_layers = random.randint(1, 3)
+        conv_dropout = random.uniform(0.0, 0.5)
+        classifier_dropout = random.uniform(0.2, 0.6)
+        chromosomes.append(Chromosome(
+            optimizer_name=optimizer_name,
+            learning_rate=learning_rate,
+            momentum=momentum,
+            weight_decay=weight_decay,
+            num_conv_layers=num_conv_layers,
+            conv_dropout=conv_dropout,
+            classifier_dropout=classifier_dropout
+        ))
     return chromosomes
+
+
+def compare_chromosomes(ch1, ch2):
+    score = 0
+    score += int(ch1.optimizer_name != ch2.optimizer_name)
+    score += abs(ch1.learning_rate - ch2.learning_rate)
+    score += abs(ch1.momentum - ch2.momentum)
+    score += abs(ch1.weight_decay - ch2.weight_decay)
+    score += abs(ch1.num_conv_layers - ch2.num_conv_layers)
+    score += abs(ch1.conv_dropout - ch2.conv_dropout)
+    score += abs(ch1.classifier_dropout - ch2.classifier_dropout)
+    return score
+
+
+
+def calculate_diversity(population):
+    total_difference = 0
+    n = len(population)
+    for i in range(n):
+        for j in range(i + 1, n):
+            difference = compare_chromosomes(population[i], population[j])
+            print(f"Difference between chromosome {i} and {j}: {difference}")
+            total_difference += difference
+    num_pairs = n * (n - 1) / 2
+    diversity_score = total_difference / num_pairs if num_pairs > 0 else 0
+    print(f"Calculated Diversity Score: {diversity_score}")
+    return diversity_score
+
+
+
+def get_mutation_rate(diversity, low_threshold=1.0, high_threshold=2.5):
+    """
+    Adjust the mutation rate based on the diversity of the population.
+
+    :param diversity: The diversity score of the population.
+    :param low_threshold: The threshold below which mutation rate is increased.
+    :param high_threshold: The threshold above which mutation rate is decreased.
+    :return: The mutation rate.
+    """
+    if diversity < low_threshold:
+        return 0.8
+    elif diversity > high_threshold:
+        return 0.15
+    else:
+        return 0.3
+
+
+
+
+
+
+
+
+
+
+
+
+
 
 
 
