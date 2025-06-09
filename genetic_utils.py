@@ -140,17 +140,27 @@ def build_random_chromosomes(number_of_instances=10): #for initial population
     return chromosomes
 
 
+OPTIMIZER_DISTANCE = {
+    ('SGD', 'Adam'): 1.0,
+    ('SGD', 'RMSprop'): 0.8,
+    ('Adam', 'RMSprop'): 0.5,
+}
+
+def optimizer_distance(opt1, opt2):
+    if opt1 == opt2:
+        return 0.0
+    return OPTIMIZER_DISTANCE.get((opt1, opt2), OPTIMIZER_DISTANCE.get((opt2, opt1), 1.0))
+
 def compare_chromosomes(ch1, ch2):
     score = 0
-    score += int(ch1.optimizer_name != ch2.optimizer_name)
-    score += abs(ch1.learning_rate - ch2.learning_rate)
-    score += abs(ch1.momentum - ch2.momentum)
-    score += abs(ch1.weight_decay - ch2.weight_decay)
-    score += abs(ch1.num_conv_layers - ch2.num_conv_layers)
-    score += abs(ch1.conv_dropout - ch2.conv_dropout)
-    score += abs(ch1.classifier_dropout - ch2.classifier_dropout)
+    score += optimizer_distance(ch1.optimizer_name, ch2.optimizer_name)
+    score += abs(ch1.learning_rate - ch2.learning_rate) / 0.01  # normalize by max range
+    score += abs(ch1.momentum - ch2.momentum) / 0.19
+    score += abs(ch1.weight_decay - ch2.weight_decay) / 0.0001
+    score += abs(ch1.num_conv_layers - ch2.num_conv_layers) / 2  # max difference is 2
+    score += abs(ch1.conv_dropout - ch2.conv_dropout) / 0.5
+    score += abs(ch1.classifier_dropout - ch2.classifier_dropout) / 0.4
     return score
-
 
 
 def calculate_diversity(population):
