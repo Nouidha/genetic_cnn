@@ -57,15 +57,40 @@ def main(dataset:conv_utils.DatasetName=conv_utils.DatasetName.MINST, train_size
     for _ in range(5):
         instance1, instance2 = model_history.return_couple(how_far_back=1.0, top=top)
         top -= 0.05
+        
         print(f"chromosome 1: {instance1['chromosome']} \nchromosome 2: {instance2['chromosome']}")
+        
         crossover_chromosome = instance1['chromosome'].crossover(instance2['chromosome'])
         print(f"crossover chromosome: {crossover_chromosome}")
-        mutated_chromosome = crossover_chromosome.mutate()
+
+        # Calculate diversity of the population
+        population = [instance["chromosome"] for instance in model_history.history]
+        diversity_score = genetic_utils.calculate_diversity(population)
+        mutation_rate = genetic_utils.get_mutation_rate(diversity_score)
+
+        print(f"Diversity Score: {diversity_score}, Mutation Rate: {mutation_rate}")
+
+        ###
+        
+        mutated_chromosome = crossover_chromosome.mutate(rate=mutation_rate)
         print(f"mutated chromosome: {mutated_chromosome}")
+        
         model, optimizer = build_model_optimizer(num_classes=num_classes, img_shape=img_shape, chromosome=mutated_chromosome, device=device)
         accuracy = conv_utils.train_model(train_loader, test_loader, model, optimizer, device, n_epochs=10)
         print(f"model accuracy: {accuracy}")
+        
         model_history.add_instance(chromosome=mutated_chromosome, model=model, accuracy=accuracy)
+
+
+        ##### tu peux  l'enlever si tu veux 
+        best_model = max(model_history.history, key=lambda x: x["accuracy"])
+        print(f"Best accuracy so far: {best_model['accuracy']:.4f}") #added this just to see the best accuracy so far
+        print(f"Best chromosome: {best_model['chromosome']}")
+
+
+
+
+  
 
 
 
