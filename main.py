@@ -79,8 +79,16 @@ def main(dataset:conv_utils.DatasetName=conv_utils.DatasetName.MINST, train_size
         accuracy = conv_utils.train_model(train_loader, test_loader, model, optimizer, device, n_epochs=10)
         print(f"model accuracy: {accuracy}")
         
-        model_history.add_instance(chromosome=mutated_chromosome, model=model, accuracy=accuracy)
+        #model_history.add_instance(chromosome=mutated_chromosome, model=model, accuracy=accuracy)
 
+        #jai ajouté ca pour remplacer le pire de la pop avec le bb si il est meilleur 
+        worst = min(model_history.history, key=lambda x: x["accuracy"])
+        if accuracy > worst["accuracy"]:
+            model_history.history.remove(worst)
+            model_history.add_instance(chromosome=mutated_chromosome, model=model, accuracy=accuracy)
+            print("Replaced worst model with new child.")
+        else:
+            print("Child was not better than worst in population — discarded.")
 
         ##### tu peux  l'enlever si tu veux 
         best_model = max(model_history.history, key=lambda x: x["accuracy"])
