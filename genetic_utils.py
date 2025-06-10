@@ -1,5 +1,6 @@
 import random
 import math
+import numpy as np
 import torch.optim as optim
 
 
@@ -37,16 +38,31 @@ class Chromosome:
         :param rate: The probability of inheriting a gene from the first parent.
         :return: offspring.
         """
-        # here we randomly combine genes from both parents
-        optimizer_name = self.optimizer_name if random.random() < rate else second_instance.optimizer_name
-        learning_rate = self.learning_rate if random.random() < rate else second_instance.learning_rate
-        momentum = self.momentum if random.random() < rate else second_instance.momentum
-        weight_decay = self.weight_decay if random.random() < rate else second_instance.weight_decay
-        num_conv_layers = self.num_conv_layers if random.random() < rate else second_instance.num_conv_layers
-        conv_dropout = self.conv_dropout if random.random() < rate else second_instance.conv_dropout
-        classifier_dropout = self.classifier_dropout if random.random() < rate else second_instance.classifier_dropout
+        # we are going to split a chromosome into two parts, first part if the optimizer config
+        # and the second part is the NN config.
+        if random.random() < rate:
+            optimizer_name = self.optimizer_name
+            learning_rate = self.learning_rate
+            momentum = self.momentum
+            weight_decay = self.weight_decay
+        else:
+            optimizer_name = second_instance.optimizer_name
+            learning_rate = second_instance.learning_rate
+            momentum = second_instance.momentum
+            weight_decay = second_instance.weight_decay
 
-        # we reeturn the babies offspring chromosome
+        if random.random() < rate:
+            num_conv_layers = self.num_conv_layers
+            conv_dropout = self.conv_dropout
+            classifier_dropout = self.classifier_dropout
+        else:
+            num_conv_layers = second_instance.num_conv_layers
+            conv_dropout = second_instance.conv_dropout
+            classifier_dropout = second_instance.classifier_dropout
+
+
+
+        # we return the babies offspring chromosome
 
         return Chromosome(
             optimizer_name=optimizer_name,
@@ -59,36 +75,28 @@ class Chromosome:
         )
 
     
-    def mutate(self, rate):
-        mutated = False 
-        #making sure that at least one parameter is mutated
-        while not mutated:
-            optimizer_name = random.choice(['SGD', 'Adam', 'RMSprop']) if random.random() < rate else self.optimizer_name
-            learning_rate = random.uniform(1e-5, 1e-2) if random.random() < rate else self.learning_rate
-            momentum = random.uniform(0.8, 0.99) if random.random() < rate else self.momentum
-            weight_decay = random.uniform(1e-7, 1e-4) if random.random() < rate else self.weight_decay
-            num_conv_layers = random.randint(1, 3) if random.random() < rate else self.num_conv_layers
-            conv_dropout = random.uniform(0.0, 0.5) if random.random() < rate else self.conv_dropout
-            classifier_dropout = random.uniform(0.2, 0.6) if random.random() < rate else self.classifier_dropout
+    def mutate(self, rate=0.5):
 
-            mutated = any([
-                optimizer_name != self.optimizer_name,
-                learning_rate != self.learning_rate,
-                momentum != self.momentum,
-                weight_decay != self.weight_decay,
-                num_conv_layers != self.num_conv_layers,
-                conv_dropout != self.conv_dropout,
-                classifier_dropout != self.classifier_dropout,
-            ])
+        if math.fabs(np.random.normal(0, 1, 1))>0.8:
+            optimizer_name = random.choice(['SGD', 'Adam', 'RMSprop'])
+        else:
+            optimizer_name = self.optimizer_name
+
+        num_conv_layers = self.num_conv_layers
+        learning_rate = math.fabs(self.learning_rate + np.random.normal(0, rate*0.005, 1))
+        momentum = math.fabs(self.momentum + np.random.normal(0, rate*0.04, 1))
+        weight_decay = math.fabs(self.weight_decay + np.random.normal(0, rate*0.005, 1))
+        conv_dropout = math.fabs(self.conv_dropout + np.random.normal(0, rate*0.04, 1))
+        classifier_dropout = math.fabs(self.classifier_dropout + np.random.normal(0, rate*0.04, 1))
 
         return Chromosome(
-            optimizer_name, 
-            learning_rate, 
-            momentum, 
-            weight_decay,
-            num_conv_layers, 
-            conv_dropout, 
-            classifier_dropout
+            optimizer_name=optimizer_name,
+            learning_rate=learning_rate,
+            momentum=momentum,
+            weight_decay=weight_decay,
+            num_conv_layers=num_conv_layers,
+            conv_dropout=conv_dropout,
+            classifier_dropout=classifier_dropout
         )
 
 
@@ -122,11 +130,11 @@ def build_random_chromosomes(number_of_instances=10): #for initial population
     chromosomes = []
     for _ in range(number_of_instances):
         optimizer_name = random.choice(['SGD', 'Adam', 'RMSprop'])
-        learning_rate = random.uniform(1e-5, 1e-2)
+        learning_rate = random.uniform(1e-4, 1e-2)
         momentum = random.uniform(0.8, 0.99)
-        weight_decay = random.uniform(1e-7, 1e-4)
+        weight_decay = random.uniform(1e-4, 1e-2)
         num_conv_layers = random.randint(1, 3)
-        conv_dropout = random.uniform(0.0, 0.5)
+        conv_dropout = random.uniform(0.1, 0.5)
         classifier_dropout = random.uniform(0.2, 0.6)
         chromosomes.append(Chromosome(
             optimizer_name=optimizer_name,
