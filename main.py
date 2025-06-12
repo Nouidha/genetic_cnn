@@ -51,20 +51,21 @@ def main(dataset:conv_utils.DatasetName=conv_utils.DatasetName.MINST, train_size
 
 
     # run the genetic algorithme for 20 epochs
-    top = 0.5
+    top = 0.3
     for epoch in range(20):
+
+        
         instance1, instance2 = model_history.return_couple(how_far_back=1.0, top=top)
-        top -= 0.02
 
         crossover_chromosome = instance1['chromosome'].crossover(instance2['chromosome'])
         mutated_chromosome = crossover_chromosome.mutate(rate=0.5)
 
         # Calculate diversity of the population
-        # population = [instance["chromosome"] for instance in model_history.history]
-        # diversity_score = genetic_utils.calculate_diversity(population)
-        # mutation_rate = genetic_utils.get_mutation_rate(diversity_score)
+        population = [instance["chromosome"] for instance in model_history.history]
+        diversity_score = genetic_utils.calculate_diversity(population)
+        #mutation_rate = genetic_utils.get_mutation_rate(diversity_score)
         #
-        # print(f"Diversity Score: {diversity_score}, Mutation Rate: {mutation_rate}")
+        print(f"Diversity Score: {diversity_score})") #, Mutation Rate: {mutation_rate}")
 
         ###
         
@@ -79,19 +80,19 @@ def main(dataset:conv_utils.DatasetName=conv_utils.DatasetName.MINST, train_size
 
         model_history.add_instance(chromosome=mutated_chromosome, model=model, accuracy=accuracy)
 
-        # #jai ajouté ca pour remplacer le pire de la pop avec le bb si il est meilleur
-        # worst = min(model_history.history, key=lambda x: x["accuracy"])
-        # if accuracy > worst["accuracy"]:
-        #     model_history.history.remove(worst)
-        #     model_history.add_instance(chromosome=mutated_chromosome, model=model, accuracy=accuracy)
-        #     print("Replaced worst model with new child.")
-        # else:
-        #     print("Child was not better than worst in population — discarded.")
-        #
-        # ##### tu peux  l'enlever si tu veux
-        # best_model = max(model_history.history, key=lambda x: x["accuracy"])
-        # print(f"Best accuracy so far: {best_model['accuracy']:.4f}") #added this just to see the best accuracy so far
-        # print(f"Best chromosome: {best_model['chromosome']}")
+        # jai ajouté ca pour remplacer le pire de la pop avec le bb si il est meilleur
+        worst = min(model_history.history, key=lambda x: x["accuracy"])
+        if accuracy > worst["accuracy"]:
+             model_history.history.remove(worst)
+             model_history.add_instance(chromosome=mutated_chromosome, model=model, accuracy=accuracy)
+             print("Replaced worst model with new child.")
+         else:
+             print("Child was not better than worst in population — discarded.")
+        
+         # tu peux  l'enlever si tu veux
+         best_model = max(model_history.history, key=lambda x: x["accuracy"])
+         print(f"Best accuracy so far: {best_model['accuracy']:.4f}") #added this just to see the best accuracy so far
+         print(f"Best chromosome: {best_model['chromosome']}")
 
 
 
