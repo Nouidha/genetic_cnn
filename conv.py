@@ -13,7 +13,7 @@ class CNN(nn.Module):
         self.img_cols = img_cols
         self.img_channels = img_channels
 
-        assert num_conv_layers in [1, 2,3,4], "Number of convolutional layers must be equal to 1, 2, 3 or 4"
+        assert num_conv_layers in [1,2,3,4], "Number of convolutional layers must be equal to 1, 2, 3 or 4"
 
         self.model = nn.Sequential(
         nn.Conv2d(in_channels=self.img_channels, out_channels=32, kernel_size=3, stride=1, padding=1),
