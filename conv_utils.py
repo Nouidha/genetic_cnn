@@ -111,7 +111,7 @@ def run_epoch(data, model, optimizer, device):
     # If model is in train mode, use optimizer.
     is_training = model.training
 
-    for images, labels in data:# tqdm(data):
+    for images, labels in tqdm(data):
         images, labels = images.to(device), labels.to(device)
 
         # Get output predictions

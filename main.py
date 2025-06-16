@@ -2,8 +2,8 @@ import conv
 import conv_utils
 import genetic_utils
 import torch
-import torch.nn as nn
-import torch.optim as optim
+import matplotlib.pyplot as plt
+
 from torch.utils.data import DataLoader
 
 def build_model_optimizer(num_classes, img_shape, chromosome, device):
@@ -14,8 +14,17 @@ def build_model_optimizer(num_classes, img_shape, chromosome, device):
     optimizer = chromosome.return_optimizer(model)
     return model, optimizer
 
+def get_dataset_name(dataset:conv_utils.DatasetName):
+    if dataset == conv_utils.DatasetName.MINST:
+        return "MINST"
+    elif dataset == conv_utils.DatasetName.CIFAR10:
+        return "CIFAR10"
+    elif dataset == conv_utils.DatasetName.CIFAR100:
+        return "CIFAR100"
+    else:
+        raise ValueError("Unknown dataset")
 
-def main(dataset:conv_utils.DatasetName=conv_utils.DatasetName.MINST, train_size=0.3, test_size=0.1):
+def main(dataset:conv_utils.DatasetName=conv_utils.DatasetName.CIFAR10, train_size=0.3, test_size=0.1):
     """
 
     :param dataset: enum value designing the name of the dataset
@@ -24,7 +33,7 @@ def main(dataset:conv_utils.DatasetName=conv_utils.DatasetName.MINST, train_size
     :return:
     """
     #ensure deterministic behavior
-    #conv_utils.set_seed(42)
+    conv_utils.set_seed(42)
     # use cuda when possible
     if torch.cuda.is_available():
         device = torch.device('cuda')
@@ -49,12 +58,20 @@ def main(dataset:conv_utils.DatasetName=conv_utils.DatasetName.MINST, train_size
         print(f"accuracy: {accuracy}, {chromosome}")
         model_history.add_instance(chromosome=chromosome, model=model, accuracy=accuracy)
 
+    # generate Histogram of the obtained accuracies
+    plt.hist(model_history.get_accuracies(), bins=5, edgecolor='black')
+    plt.title('Quality of the initial population')
+    plt.xlabel('Accuracy')
+    plt.ylabel('Number of chromosomes')
+    plt.savefig(f"quality_of_initial_population_{get_dataset_name(dataset)}.png")
+    plt.show()
+
 
     # run the genetic algorithme for 20 epochs
+    offsprings_accuracies = []
     top = 0.3
     for epoch in range(20):
 
-        
         instance1, instance2 = model_history.return_couple(how_far_back=1.0, top=top)
 
         crossover_chromosome = instance1['chromosome'].crossover(instance2['chromosome'])
@@ -78,21 +95,39 @@ def main(dataset:conv_utils.DatasetName=conv_utils.DatasetName.MINST, train_size
         print(f"crossover: accuracy: N.A., {crossover_chromosome}")
         print(f"mutated: accuracy: {accuracy}, {mutated_chromosome}")
 
+        offsprings_accuracies.append(accuracy)
+
         model_history.add_instance(chromosome=mutated_chromosome, model=model, accuracy=accuracy)
 
         # jai ajouté ca pour remplacer le pire de la pop avec le bb si il est meilleur
         worst = min(model_history.history, key=lambda x: x["accuracy"])
         if accuracy > worst["accuracy"]:
-             model_history.history.remove(worst)
-             model_history.add_instance(chromosome=mutated_chromosome, model=model, accuracy=accuracy)
-             print("Replaced worst model with new child.")
-         else:
-             print("Child was not better than worst in population — discarded.")
+            model_history.history.remove(worst)
+            model_history.add_instance(chromosome=mutated_chromosome, model=model, accuracy=accuracy)
+            print("Replaced worst model with new child.")
+        else:
+            print("Child was not better than worst in population — discarded.")
         
          # tu peux  l'enlever si tu veux
-         best_model = max(model_history.history, key=lambda x: x["accuracy"])
-         print(f"Best accuracy so far: {best_model['accuracy']:.4f}") #added this just to see the best accuracy so far
-         print(f"Best chromosome: {best_model['chromosome']}")
+        best_model = max(model_history.history, key=lambda x: x["accuracy"])
+        print(f"Best accuracy so far: {best_model['accuracy']:.4f}") #added this just to see the best accuracy so far
+        print(f"Best chromosome: {best_model['chromosome']}")
+
+    # display the evolution of the offsprings
+    plt.plot(range(len(offsprings_accuracies)), offsprings_accuracies, marker='o')
+    plt.title("Evolution of offspring accuracy")
+    plt.xlabel("Epoch")
+    plt.ylabel("Accuracy")
+    plt.savefig(f"offsprings_accuracy_{get_dataset_name(dataset)}.png")
+    plt.show()
+
+    # generate Histogram of the obtained accuracies
+    plt.hist(model_history.get_accuracies(), bins=5, edgecolor='black')
+    plt.title('Quality of the final population')
+    plt.xlabel('Accuracy')
+    plt.ylabel('Number of chromosomes')
+    plt.savefig(f"quality_of_final_population_{get_dataset_name(dataset)}.png")
+    plt.show()
 
 
 

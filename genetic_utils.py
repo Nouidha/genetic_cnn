@@ -108,6 +108,9 @@ class PopulationHistory:
         model_instance = {"model": model, "accuracy": accuracy, "chromosome": chromosome}
         self.history.append(model_instance)
 
+    def get_accuracies(self):
+        return [value["accuracy"] for value in self.history]
+
 
     def return_couple(self, how_far_back=1.0, top=0.3):
         """
@@ -133,7 +136,7 @@ def build_random_chromosomes(number_of_instances=10): #for initial population
         learning_rate = random.uniform(1e-4, 1e-2)
         momentum = random.uniform(0.8, 0.99)
         weight_decay = random.uniform(1e-4, 1e-2)
-        num_conv_layers = random.randint(1, 3)
+        num_conv_layers = random.randint(1, 4)
         conv_dropout = random.uniform(0.1, 0.5)
         classifier_dropout = random.uniform(0.2, 0.6)
         chromosomes.append(Chromosome(
