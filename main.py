@@ -97,7 +97,6 @@ def main(dataset:conv_utils.DatasetName=conv_utils.DatasetName.CIFAR10, train_si
 
         offsprings_accuracies.append(accuracy)
 
-        #model_history.add_instance(chromosome=mutated_chromosome, model=model, accuracy=accuracy)
 
         # jai ajouté ca pour remplacer le pire de la pop avec le bb si il est meilleur
         worst = min(model_history.history, key=lambda x: x["accuracy"])
