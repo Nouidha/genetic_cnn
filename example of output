@@ -1,1 +1,55 @@
+MINST suboptimal 
 
+first created offspring : 
+
+epoch: 0
+instance 1: accuracy: 0.13735593971631208, optimizer : 'SGD', learning rate : 0.5, momentum : 0.0, weight decay : 0.0, conv layers : 2, conv dropout : 0.7, classification dropout : 0.8
+
+instance 2: accuracy: 0.3589317375886525, optimizer : 'SGD', learning rate : 0.5, momentum : 0.0, weight decay : 0.0, conv layers : 1, conv dropout : 0.8, classification dropout : 0.7
+
+crossover: optimizer : 'SGD', learning rate : 0.5, momentum : 0.0, weight decay : 0.0, conv layers : 2, conv dropout : 0.7, classification dropout : 0.8
+
+mutated: accuracy: 0.28147163120567376, optimizer : 'SGD', learning rate : 0.49965433924707203, momentum : 0.01295377076201385, weight decay : 0.0038075746410200636, conv layers : 2, conv dropout : 0.6953169325055333, classification dropout : 0.7953172608610164
+
+Diversity Score: 27.08518532558313
+
+
+
+epoch: 1
+instance 1: accuracy: 0.3589317375886525, optimizer : 'SGD', learning rate : 0.5, momentum : 0.0, weight decay : 0.0, conv layers : 1, conv dropout : 0.8, classification dropout : 0.7
+
+instance 2: accuracy: 0.28147163120567376, optimizer : 'SGD', learning rate : 0.49965433924707203, momentum : 0.01295377076201385, weight decay : 0.0038075746410200636, conv layers : 2, conv dropout : 0.6953169325055333, classification dropout : 0.7953172608610164
+
+crossover: optimizer : 'SGD', learning rate : 0.49965433924707203, momentum : 0.01295377076201385, weight decay : 0.0038075746410200636, conv layers : 2, conv dropout : 0.6953169325055333, classification dropout : 0.7953172608610164
+
+mutated: accuracy: 0.11513741134751772, optimizer : 'SGD', learning rate : 0.5015729260699543, momentum : 0.0035642830433148063, weight decay : 0.005163974749984975, conv layers : 2, conv dropout : 0.686048578649284, classification dropout : 0.7860026657896113
+
+Diversity Score: 35.282880931493665
+
+
+epoch: 16
+instance 1: accuracy: 0.49839317375886527, optimizer : 'SGD', learning rate : 0.5064879624100794, momentum : 0.022076004524678415, weight decay : 0.0023754375578973414, conv layers : 1, conv dropout : 0.6830575213749254, classification dropout : 0.652712478818889
+
+instance 2: accuracy: 0.4867021276595745, optimizer : 'SGD', learning rate : 0.5001547407942122, momentum : 0.01627783567956943, weight decay : 0.001139836663453702, conv layers : 1, conv dropout : 0.6908996844375686, classification dropout : 0.6819827777815314
+
+crossover: optimizer : 'SGD', learning rate : 0.5001547407942122, momentum : 0.01627783567956943, weight decay : 0.001139836663453702, conv layers : 1, conv dropout : 0.6908996844375686, classification dropout : 0.6819827777815314
+
+mutated: accuracy: 0.45711436170212766, optimizer : 'SGD', learning rate : 0.5008073789746619, momentum : 0.016380104812418646, weight decay : 0.0005533688300158336, conv layers : 1, conv dropout : 0.6625922695965603, classification dropout : 0.6735698713262241
+
+Diversity Score: 15.651986977369251
+
+
+epoch: 19
+instance 1: accuracy: 0.48287898936170215, optimizer : 'SGD', learning rate : 0.49917888648237346, momentum : 0.01950433902091634, weight decay : 0.0029472091658974717, conv layers : 1, conv dropout : 0.695225349024492, classification dropout : 0.6908916965290923
+
+instance 2: accuracy: 0.4867021276595745, optimizer : 'SGD', learning rate : 0.5001547407942122, momentum : 0.01627783567956943, weight decay : 0.001139836663453702, conv layers : 1, conv dropout : 0.6908996844375686, classification dropout : 0.6819827777815314
+
+crossover: optimizer : 'SGD', learning rate : 0.5001547407942122, momentum : 0.01627783567956943, weight decay : 0.001139836663453702, conv layers : 1, conv dropout : 0.6908996844375686, classification dropout : 0.6819827777815314
+
+mutated: accuracy: 0.3667442375886525, optimizer : 'SGD', learning rate : 0.5009086091500462, momentum : 0.015583600285464563, weight decay : 0.001781858430595128, conv layers : 1, conv dropout : 0.713756140727869, classification dropout : 0.6970214384352669
+
+
+
+
+BEST CHROMOSOME AT EPOCH 16 
+Best chromosome: accuracy: 0.4984, optimizer : 'SGD', learning rate : 0.5064879624100794, momentum : 0.022076004524678415, weight decay : 0.0023754375578973414, conv layers : 1, conv dropout : 0.6830575213749254, classification dropout : 0.652712478818889
