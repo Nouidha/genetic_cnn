@@ -58,8 +58,7 @@ def main(dataset:conv_utils.DatasetName=conv_utils.DatasetName.CIFAR100, train_s
     train_loader = DataLoader(train_dataset, batch_size=64, shuffle=True)
     test_loader = DataLoader(test_dataset, batch_size=64, shuffle=False)
 
-    # create initial random chromosomes
-    random_chromosomes = genetic_utils.build_random_chromosomes(15)
+
     # create and train a model for each config and add it to the models history
     model_history = genetic_utils.PopulationHistory()
     for chromosome in random_chromosomes:
