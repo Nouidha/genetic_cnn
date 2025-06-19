@@ -91,7 +91,7 @@ def main(dataset:conv_utils.DatasetName=conv_utils.DatasetName.CIFAR100, train_s
         diversity_score = genetic_utils.calculate_diversity(population)
         #mutation_rate = genetic_utils.get_mutation_rate(diversity_score)
         #
-        print(f"Diversity Score: {diversity_score})") #, Mutation Rate: {mutation_rate}")
+        print(f"Diversity Score: {diversity_score}") #, Mutation Rate: {mutation_rate}")
 
         ###
         
