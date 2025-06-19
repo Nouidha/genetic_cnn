@@ -145,8 +145,10 @@ def main(dataset:conv_utils.DatasetName=conv_utils.DatasetName.CIFAR10, train_si
         
          # tu peux  l'enlever si tu veux
         best_model = max(model_history.history, key=lambda x: x["accuracy"])
-        print(f"Best accuracy so far: {best_model['accuracy']:.4f}") #added this just to see the best accuracy so far
-        print(f"Best chromosome: {best_model['chromosome']}")
+    
+    
+    print(f"Best accuracy so far: {best_model['accuracy']:.4f}") #added this just to see the best accuracy so far
+    print(f"Best chromosome: {best_model['chromosome']}")
 
     # display the evolution of the offsprings
     plt.plot(range(len(offsprings_accuracies)), offsprings_accuracies, marker='o')
