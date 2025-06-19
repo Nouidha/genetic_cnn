@@ -180,11 +180,11 @@ def calculate_diversity(population):
     for i in range(n):
         for j in range(i + 1, n):
             difference = compare_chromosomes(population[i], population[j])
-            print(f"Difference between chromosome {i} and {j}: {difference}")
+            #print(f"Difference between chromosome {i} and {j}: {difference}")
             total_difference += difference
     num_pairs = n * (n - 1) / 2
     diversity_score = total_difference / num_pairs if num_pairs > 0 else 0
-    print(f"Calculated Diversity Score: {diversity_score}")
+    #print(f"Calculated Diversity Score: {diversity_score}")
     return diversity_score
 
 

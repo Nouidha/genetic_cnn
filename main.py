@@ -2,6 +2,7 @@ import conv
 import conv_utils
 import genetic_utils
 import torch
+import random
 import matplotlib.pyplot as plt
 
 from torch.utils.data import DataLoader
@@ -53,7 +54,7 @@ def build_suboptimal_chromosomes(nb_of_instances):
 
 
 
-def main(dataset:conv_utils.DatasetName=conv_utils.DatasetName.CIFAR10, train_size=0.3, test_size=0.1):
+def main(dataset:conv_utils.DatasetName=conv_utils.DatasetName.CIFAR100, train_size=0.3, test_size=0.1):
     """
 
     :param dataset: enum value designing the name of the dataset
@@ -73,7 +74,7 @@ def main(dataset:conv_utils.DatasetName=conv_utils.DatasetName.CIFAR10, train_si
 
 
     #building initial chromosomes // ajouter 
-    if dataset == conv_utils.DatasetName.MINST:
+    if False:#dataset == conv_utils.DatasetName.MINST:
         random_chromosomes = build_suboptimal_chromosomes(10)
     else:
         random_chromosomes = genetic_utils.build_random_chromosomes(15)
@@ -139,16 +140,13 @@ def main(dataset:conv_utils.DatasetName=conv_utils.DatasetName.CIFAR10, train_si
         if accuracy > worst["accuracy"]:
             model_history.history.remove(worst)
             model_history.add_instance(chromosome=mutated_chromosome, model=model, accuracy=accuracy)
-            print("Replaced worst model with new child.")
-        else:
-            print("Child was not better than worst in population — discarded.")
+            #print("Replaced worst model with new child.")
+        #else:
+            #print("Child was not better than worst in population — discarded.")
         
-         # tu peux  l'enlever si tu veux
-        best_model = max(model_history.history, key=lambda x: x["accuracy"])
-    
-    
-    print(f"Best accuracy so far: {best_model['accuracy']:.4f}") #added this just to see the best accuracy so far
-    print(f"Best chromosome: {best_model['chromosome']}")
+    # tu peux  l'enlever si tu veux
+    best_model = max(model_history.history, key=lambda x: x["accuracy"])
+    print(f"Best chromosome: accuracy: {best_model['accuracy']:.4f}, {best_model['chromosome']}")
 
     # display the evolution of the offsprings
     plt.plot(range(len(offsprings_accuracies)), offsprings_accuracies, marker='o')
