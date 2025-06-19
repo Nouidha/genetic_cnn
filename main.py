@@ -27,33 +27,6 @@ def get_dataset_name(dataset:conv_utils.DatasetName):
 
 
 
-#ajouter 
-def build_suboptimal_chromosomes(nb_of_instances):
-
-    optimizers = ['SGD', 'Adam', 'RMSprop']
-    learning_rates = [0.5, 0.3, 0.1]
-    momentums = [0.0]
-    weight_decays = [0.0]
-    num_conv_layers = [1, 2]
-    conv_dropouts = [0.7, 0.8, 0.9]
-    classifier_dropouts = [0.7, 0.8, 0.9]
-
-    chromosomes = []
-    for _ in range(nb_of_instances):
-        chromosome = genetic_utils.Chromosome(
-            optimizer_name=random.choice(optimizers),
-            learning_rate=random.choice(learning_rates),
-            momentum=random.choice(momentums),
-            weight_decay=random.choice(weight_decays),
-            num_conv_layers=random.choice(num_conv_layers),
-            conv_dropout=random.choice(conv_dropouts),
-            classifier_dropout=random.choice(classifier_dropouts)
-        )
-        chromosomes.append(chromosome)
-    return chromosomes
-
-
-
 def main(dataset:conv_utils.DatasetName=conv_utils.DatasetName.CIFAR100, train_size=0.3, test_size=0.1):
     """
 
@@ -75,7 +48,7 @@ def main(dataset:conv_utils.DatasetName=conv_utils.DatasetName.CIFAR100, train_s
 
     #building initial chromosomes // ajouter 
     if False:#dataset == conv_utils.DatasetName.MINST:
-        random_chromosomes = build_suboptimal_chromosomes(10)
+        random_chromosomes = genetic_utils.build_suboptimal_chromosomes(10)
     else:
         random_chromosomes = genetic_utils.build_random_chromosomes(15)
 
