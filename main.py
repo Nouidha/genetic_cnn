@@ -101,7 +101,7 @@ def main(dataset:conv_utils.DatasetName=conv_utils.DatasetName.CIFAR100, train_s
         print(f"epoch: {epoch}")
         print(f"instance 1: accuracy: {instance1['accuracy']}, {instance1['chromosome']}")
         print(f"instance 2: accuracy: {instance2['accuracy']}, {instance2['chromosome']}")
-        print(f"crossover: accuracy: N.A., {crossover_chromosome}")
+        #print(f"crossover: accuracy: N.A., {crossover_chromosome}")
         print(f"mutated: accuracy: {accuracy}, {mutated_chromosome}")
 
         offsprings_accuracies.append(accuracy)
