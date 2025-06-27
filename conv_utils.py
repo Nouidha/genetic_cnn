@@ -45,7 +45,7 @@ def load_train_test_dataset(dataset:DatasetName, train_size, test_size, random_s
     """
     if dataset == DatasetName.CIFAR100:
         download = force_download or not os.path.exists('./data/cifar-100-batches-py')
-        train_dataset = tv.datasets.CIFAR10(root='./data', train=True, download=download, transform=rgb_transform)
+        train_dataset = tv.datasets.CIFAR100(root='./data', train=True, download=download, transform=rgb_transform)
     elif dataset == DatasetName.CIFAR10:
         download = force_download or not os.path.exists('./data/cifar-10-batches-py')
         train_dataset = tv.datasets.CIFAR10(root='./data', train=True, download=download, transform=rgb_transform)
