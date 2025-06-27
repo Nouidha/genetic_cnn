@@ -78,6 +78,7 @@ def main(dataset:conv_utils.DatasetName=conv_utils.DatasetName.CIFAR100, train_s
 
     # run the genetic algorithme for 20 epochs
     offsprings_accuracies = []
+    diversity_scores = []
     top = 0.3
     for epoch in range(20):
 
@@ -89,6 +90,8 @@ def main(dataset:conv_utils.DatasetName=conv_utils.DatasetName.CIFAR100, train_s
         # Calculate diversity of the population
         population = [instance["chromosome"] for instance in model_history.history]
         diversity_score = genetic_utils.calculate_diversity(population)
+        diversity_scores.append(diversity_score)  
+        print(f"Diversity Score: {diversity_score})")
         #mutation_rate = genetic_utils.get_mutation_rate(diversity_score)
         #
         print(f"Diversity Score: {diversity_score}") #, Mutation Rate: {mutation_rate}")
@@ -126,6 +129,14 @@ def main(dataset:conv_utils.DatasetName=conv_utils.DatasetName.CIFAR100, train_s
     plt.xlabel("Epoch")
     plt.ylabel("Accuracy")
     plt.savefig(f"offsprings_accuracy_{get_dataset_name(dataset)}.png")
+    plt.show()
+
+    #plotting the diversity of the pop evolution 
+    plt.plot(range(len(diversity_scores)), diversity_scores, marker='o')
+    plt.title("Evolution of Population Diversity")
+    plt.xlabel("Epoch")
+    plt.ylabel("Diversity Score")
+    plt.savefig(f"diversity_evolution_{get_dataset_name(dataset)}.png")
     plt.show()
 
     # generate Histogram of the obtained accuracies
